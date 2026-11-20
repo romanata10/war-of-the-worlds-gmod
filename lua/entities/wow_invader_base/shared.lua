@@ -1,7 +1,7 @@
 ENT.Base = "base_nextbot"
 ENT.Type = "nextbot"
 ENT.PrintName = "Martian invader"
-ENT.Category = "War of the Worlds · The Tripods"
+ENT.Category = "wotw mod"
 ENT.Spawnable = false
 ENT.AutomaticFrameAdvance = true
 ENT.ModelPath = "models/wow_tripods/tripod_red.mdl"

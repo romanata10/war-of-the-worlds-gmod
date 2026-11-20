@@ -5,7 +5,15 @@ if SERVER then
         AddCSLuaFile("wow_tripods_mesh/"..name)
     end
     util.AddNetworkString("WOWTripods_Beam")
+    util.AddNetworkString("WOWTripods_Tentacles")
     WOWTripods = WOWTripods or {}
+
+    function WOWTripods.Tentacles(from, to)
+        net.Start("WOWTripods_Tentacles")
+        net.WriteVector(from)
+        net.WriteVector(to)
+        net.SendPVS(from)
+    end
 
     function WOWTripods.Beam(from, to, red)
         net.Start("WOWTripods_Beam")
@@ -59,6 +67,10 @@ end
 
 if CLIENT then
     local beams = {}
+    local tentacles = {}
+    net.Receive("WOWTripods_Tentacles", function()
+        tentacles[#tentacles + 1] = {from = net.ReadVector(), to = net.ReadVector(), expires = CurTime() + 0.8}
+    end)
     local material = Material("sprites/laserbeam")
     net.Receive("WOWTripods_Beam", function()
         beams[#beams + 1] = {
@@ -69,6 +81,19 @@ if CLIENT then
     hook.Add("PostDrawTranslucentRenderables", "WOWTripods_DrawBeams", function(depth, skybox)
         if skybox then return end
         render.SetMaterial(material)
+        for i = #tentacles, 1, -1 do
+            local t = tentacles[i]
+            if CurTime() > t.expires then
+                table.remove(tentacles, i)
+            else
+                local side = (t.to - t.from):Cross(Vector(0,0,1)):GetNormalized()*19
+                for j = 1, 4 do
+                    local angle = (j - 1)*math.pi*0.5
+                    local offset = side*math.cos(angle) + Vector(0,0,math.sin(angle)*19)
+                    render.DrawBeam(t.from + offset, t.to + offset*0.45, 6, 0, 1, Color(90, 20, 15))
+                end
+            end
+        end
         for i = #beams, 1, -1 do
             local beam = beams[i]
             if beam.expires < CurTime() then

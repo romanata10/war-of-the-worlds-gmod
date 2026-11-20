@@ -18,7 +18,7 @@ end
 
 function WOWTripods.RedAttack(bot, target)
     if not hostile(target) then return end
-    local start = bot:GetPos() + Vector(0, 0, 200)
+    local start = bot:GetPos() + Vector(0, 0, 200*bot:GetModelScale())
     local clear, finish = clearShot(bot, target, start)
     if not clear then return end
     WOWTripods.Beam(start, finish, true)
@@ -34,10 +34,11 @@ end
 
 function WOWTripods.Stomp(bot)
     local pos = bot:GetPos()
+    local radius = 125*bot:GetModelScale()
     bot:EmitSound("NPC_Strider.StriderFootstep", 95, 75)
     util.ScreenShake(pos, 8, 5, 0.4, 300)
-    for _, victim in ipairs(ents.FindInSphere(pos, 125)) do
-        if hostile(victim) and victim:GetPos():DistToSqr(pos) <= 125*125 then
+    for _, victim in ipairs(ents.FindInSphere(pos, radius)) do
+        if hostile(victim) and victim:GetPos():DistToSqr(pos) <= radius*radius then
             local trace = util.TraceLine({start = pos + Vector(0, 0, 50), endpos = victim:WorldSpaceCenter(), filter = bot})
             if trace.Entity == victim then
                 local damage = DamageInfo()
@@ -76,8 +77,8 @@ local function capturePlayer(bot, target)
             return
         end
         ticks = ticks + 1
-        local start = bot:GetPos() + Vector(0, 0, 175)
-        local hold = bot:GetPos() + bot:GetForward()*65 + Vector(0, 0, 95)
+        local start = bot:GetPos() + Vector(0, 0, 175*bot:GetModelScale())
+        local hold = bot:GetPos() + bot:GetForward()*65 + Vector(0, 0, 95*bot:GetModelScale())
         WOWTripods.Beam(start, target:WorldSpaceCenter(), false)
         target:SetPos(LerpVector(0.16, target:GetPos(), hold))
         if ticks >= 25 then
@@ -93,12 +94,12 @@ function WOWTripods.WhiteAttack(bot, target)
     if not hostile(target) then return end
     local dist = bot:GetPos():Distance(target:GetPos())
     -- The claw only reaches 360 units. The feet can stomp at close range.
-    if dist <= 115 and math.random(2) == 1 then
+    if dist <= 150 and math.random(2) == 1 then
         WOWTripods.Stomp(bot)
         return
     end
     if dist > 360 then return end
-    local start = bot:GetPos() + Vector(0, 0, 175)
+    local start = bot:GetPos() + Vector(0, 0, 175*bot:GetModelScale())
     local clear, finish = clearShot(bot, target, start)
     if not clear then return end
     WOWTripods.Beam(start, finish, false)
