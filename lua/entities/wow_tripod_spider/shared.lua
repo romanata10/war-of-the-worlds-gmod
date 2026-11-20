@@ -1,0 +1,11 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "Spider Tripod"
+ENT.Category = "wotw mod"
+ENT.Spawnable = true
+ENT.ModelPath = "models/wotw_mod/spider_tripod.mdl"
+ENT.HealthAmount = 650
+ENT.MoveSpeed = 325
+ENT.SearchRadius = 2200
+ENT.AttackRange = 1000
+ENT.AttackDelay = 0.22

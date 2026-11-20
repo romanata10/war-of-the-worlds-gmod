@@ -16,18 +16,20 @@ local function build(kind, index, chunk)
     local object = Mesh()
     mesh.Begin(object, MATERIAL_TRIANGLES, chunk[2])
     local cursor = 1
+    local order = {3, 2, 1} -- Source front-face winding is opposite to the GLB export.
     for _ = 1, chunk[2] do
         local r, g, b = string.byte(raw, cursor, cursor + 2)
         cursor = cursor + 3
-        for _ = 1, 3 do
-            local x1, x2, y1, y2, z1, z2, nx, ny, nz = string.byte(raw, cursor, cursor + 8)
-            cursor = cursor + 9
+        for j = 1, 3 do
+            local offset = cursor + (order[j] - 1)*9
+            local x1, x2, y1, y2, z1, z2, nx, ny, nz = string.byte(raw, offset, offset + 8)
             mesh.Position(Vector(signed16(x1,x2)/100, signed16(y1,y2)/100, signed16(z1,z2)/100))
             mesh.Normal(Vector(signed8(nx)/127, signed8(ny)/127, signed8(nz)/127))
             mesh.Color(r, g, b, 255)
             mesh.TexCoord(0, 0, 0)
             mesh.AdvanceVertex()
         end
+        cursor = cursor + 27
     end
     mesh.End()
     built[kind][index] = object
@@ -51,6 +53,11 @@ function WOWTripodsRuntime.Draw(ent, kind)
             local transform = Matrix()
             transform:SetTranslation(ent:GetPos())
             transform:SetAngles(ent:GetAngles())
+            -- The SketchUp model faces -Y; GMod NextBots consider +X forward.
+            transform:Rotate(Angle(0, 90, 0))
+            if kind == "red" or kind == "white" then
+                transform:Scale(Vector(1.35, 1.35, 1.35))
+            end
             if chunk[1] ~= 0 then
                 transform:Translate(Vector(0, 0, 175))
                 local phase = (chunk[1] - 1)*math.pi*2/3

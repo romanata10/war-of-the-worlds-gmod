@@ -16,13 +16,14 @@ function ENT:Initialize()
         end
     end
     self:SetModel(model)
+    if self.IsTripod then self:SetModelScale(1.35, 0) end
     if self.ModelTint then self:SetColor(self.ModelTint) end
     self:SetHealth(self.HealthAmount)
     self:SetMaxHealth(self.HealthAmount)
     self:SetSolid(SOLID_BBOX)
     self:SetCollisionGroup(COLLISION_GROUP_NPC)
     if self.IsTripod then
-        self:SetCollisionBounds(Vector(-45, -45, 0), Vector(45, 45, 220))
+        self:SetCollisionBounds(Vector(-65, -65, 0), Vector(65, 65, 310))
     else
         self:SetCollisionBounds(Vector(-18, -18, 0), Vector(18, 18, 74))
     end
@@ -48,7 +49,11 @@ function ENT:FindEnemy()
 end
 
 function ENT:BodyUpdate()
-    local walking = self:GetVelocity():Length2D() > 12
+    local velocity = self:GetVelocity()
+    local walking = velocity:Length2D() > 12
+    if walking then
+        self.loco:FaceTowards(self:GetPos() + velocity)
+    end
     local sequence = walking and "walk" or "idle"
     if self.WOWSequence ~= sequence then
         self:ResetSequence(sequence)
