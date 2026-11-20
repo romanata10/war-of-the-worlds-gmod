@@ -1,0 +1,11 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "Martian soldier"
+ENT.Category = "War of the Worlds · The Tripods"
+ENT.Spawnable = true
+ENT.ModelPath = "models/combine_soldier.mdl"
+ENT.HealthAmount = 100
+ENT.MoveSpeed = 220
+ENT.SearchRadius = 1600
+ENT.AttackRange = 750
+ENT.AttackDelay = 0.65

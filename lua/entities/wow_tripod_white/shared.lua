@@ -1,0 +1,10 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "Tripod · white assimilator"
+ENT.Category = "War of the Worlds · The Tripods"
+ENT.Spawnable = true
+ENT.ModelPath = "models/wow_tripods/tripod_white.mdl"
+ENT.IsTripod = true
+ENT.AttackRange = 360
+ENT.AttackDelay = 4
+ENT.ModelTint = Color(240, 245, 255)

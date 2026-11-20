@@ -1,0 +1,12 @@
+ENT.Base = "base_nextbot"
+ENT.Type = "nextbot"
+ENT.PrintName = "Martian invader"
+ENT.Category = "War of the Worlds · The Tripods"
+ENT.Spawnable = false
+ENT.AutomaticFrameAdvance = true
+ENT.ModelPath = "models/wow_tripods/tripod_red.mdl"
+ENT.HealthAmount = 1400
+ENT.MoveSpeed = 125
+ENT.SearchRadius = 2400
+ENT.AttackRange = 900
+ENT.AttackDelay = 3

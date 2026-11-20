@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+ "$basetexture" "models/debug/debugwhite"
+ "$color2" "[0.2431 0.3412 0.5059]"
+ "$model" "1"
+}
