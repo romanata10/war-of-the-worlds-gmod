@@ -1,0 +1,10 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "Tripod · red heat ray"
+ENT.Category = "War of the Worlds · The Tripods"
+ENT.Spawnable = true
+ENT.ModelPath = "models/wow_tripods/tripod_red.mdl"
+ENT.IsTripod = true
+ENT.AttackRange = 1150
+ENT.AttackDelay = 2.5
+ENT.ModelTint = Color(255, 105, 105)
