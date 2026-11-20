@@ -11,6 +11,7 @@ function ENT:AttackTarget(target)
         local trace = util.TraceLine({start = origin, endpos = hit, filter = self, mask = MASK_SHOT})
         if trace.Entity ~= target then return end
         self.WOWNextTentacle = CurTime() + 2.5
+        self:SetNWFloat("WOTWAttackUntil", CurTime() + 0.8)
         target.WOWCapturing = self
         if target:IsPlayer() then target:Freeze(true) end
         WOWTripods.Tentacles(origin, hit)

@@ -1,6 +1,7 @@
 if SERVER then
     AddCSLuaFile()
     AddCSLuaFile("wow_tripods_geometry.lua")
+    AddCSLuaFile("wotw_new_geometry.lua")
     for _, name in ipairs(file.Find("lua/wow_tripods_mesh/*.lua", "GAME")) do
         AddCSLuaFile("wow_tripods_mesh/"..name)
     end

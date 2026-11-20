@@ -10,8 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class BetaChecks(unittest.TestCase):
     def test_original_glb_split_is_not_reversed(self):
-        red = (ROOT / 'generated/source_models/tripod_red.qc').read_text()
-        white = (ROOT / 'generated/source_models/tripod_white.qc').read_text()
+        with zipfile.ZipFile(ROOT / 'wotw_mod_beta.zip') as archive:
+            red = archive.read('wotw_mod/generated/source_models/tripod_red.qc').decode()
+            white = archive.read('wotw_mod/generated/source_models/tripod_white.qc').decode()
         self.assertIn('"tripod_1.smd"', red)
         self.assertIn('"tripod_0.smd"', white)
         index = (ROOT / 'lua/wow_tripods_geometry.lua').read_text()
@@ -24,7 +25,7 @@ class BetaChecks(unittest.TestCase):
         index = (ROOT / 'lua/wow_tripods_geometry.lua').read_text()
         totals = {'red': 0, 'white': 0}
         references = re.findall(r'include\("wow_tripods_mesh/([^\"]+)"\)', index)
-        self.assertEqual(set(references), {p.name for p in (ROOT / 'lua/wow_tripods_mesh').glob('*.lua')})
+        self.assertEqual(set(references), {p.name for pattern in ('red_*.lua', 'white_*.lua') for p in (ROOT / 'lua/wow_tripods_mesh').glob(pattern)})
         for name in references:
             text = (ROOT / 'lua/wow_tripods_mesh' / name).read_text()
             match = re.fullmatch(r'return \{(\d+), (\d+), "([A-Za-z0-9+/=]+)"\}\n', text)
@@ -46,6 +47,28 @@ class BetaChecks(unittest.TestCase):
             self.assertIn('wotw_mod/lua/entities/wow_tripod_1953/init.lua', names)
             self.assertIn('wotw_mod/lua/entities/wow_tripod_spider/init.lua', names)
             self.assertIn('wotw_mod/lua/wow_tripods_mesh/red_0_0.lua', names)
+            self.assertIn('wotw_mod/lua/wotw_new_geometry.lua', names)
+            self.assertIn('wotw_mod/lua/wow_tripods_mesh/1953_0_0.lua', names)
+            self.assertIn('wotw_mod/lua/wow_tripods_mesh/spider_0_0.lua', names)
+            self.assertIn('wotw_mod/1953_tripod.glb', names)
+            self.assertIn('wotw_mod/martian_spider.glb', names)
+
+    def test_new_models(self):
+        index = (ROOT / 'lua/wotw_new_geometry.lua').read_text()
+        totals = {'1953': 0, 'spider': 0}
+        used = set()
+        for name in re.findall(r'include\("wow_tripods_mesh/([^\"]+)"\)', index):
+            text = (ROOT / 'lua/wow_tripods_mesh' / name).read_text()
+            m = re.fullmatch(r'return \{(\d+), (\d+), "([A-Za-z0-9+/=]+)"\}\n', text)
+            self.assertIsNotNone(m, name)
+            group, triangles, encoded = m.groups()
+            self.assertLessEqual(int(group), 4 if name.startswith('spider_') else 3)
+            self.assertEqual(len(base64.b64decode(encoded)), int(triangles)*30)
+            kind = 'spider' if name.startswith('spider_') else '1953'
+            totals[kind] += int(triangles)
+            used.add(name)
+        self.assertEqual(used, {p.name for p in (ROOT / 'lua/wow_tripods_mesh').glob('*.lua') if p.name.startswith(('1953_', 'spider_'))})
+        self.assertEqual(totals, {'1953': 8582, 'spider': 69888})
 
 
 if __name__ == '__main__':

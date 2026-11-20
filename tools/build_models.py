@@ -77,8 +77,10 @@ def main():
     # without studiomdl. Chunk it so no single IMesh exceeds common limits.
     runtime_dir = ROOT / 'lua/wow_tripods_mesh'
     runtime_dir.mkdir(parents=True, exist_ok=True)
-    for old in runtime_dir.glob('*.lua'):
-        old.unlink()
+    # Do not remove chunks for the independently supplied 1953/Spider models.
+    for pattern in ('red_*.lua', 'white_*.lua'):
+        for old in runtime_dir.glob(pattern):
+            old.unlink()
     runtime = [[[] for _ in range(4)] for _ in range(2)]
     runtime_chunks = [[[] for _ in range(4)] for _ in range(2)]
     runtime_counts = [[0 for _ in range(4)] for _ in range(2)]
