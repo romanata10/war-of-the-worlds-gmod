@@ -1,7 +1,7 @@
 ENT.Base = "wow_invader_base"
 ENT.Type = "nextbot"
 ENT.PrintName = "Martian soldier"
-ENT.Category = "War of the Worlds · The Tripods"
+ENT.Category = "wotw mod"
 ENT.Spawnable = true
 ENT.ModelPath = "models/combine_soldier.mdl"
 ENT.HealthAmount = 100

@@ -2,5 +2,5 @@
 {
  "$basetexture" "models/debug/debugwhite"
  "$vertexcolor" "1"
- "$vertexalpha" "1"
+ "$nocull" "1"
 }

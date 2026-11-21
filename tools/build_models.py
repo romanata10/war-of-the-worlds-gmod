@@ -77,20 +77,22 @@ def main():
     # without studiomdl. Chunk it so no single IMesh exceeds common limits.
     runtime_dir = ROOT / 'lua/wow_tripods_mesh'
     runtime_dir.mkdir(parents=True, exist_ok=True)
-    for old in runtime_dir.glob('*.lua'):
-        old.unlink()
+    # Do not remove chunks for the independently supplied 1953/Spider models.
+    for pattern in ('red_*.lua', 'white_*.lua'):
+        for old in runtime_dir.glob(pattern):
+            old.unlink()
     runtime = [[[] for _ in range(4)] for _ in range(2)]
     runtime_chunks = [[[] for _ in range(4)] for _ in range(2)]
     runtime_counts = [[0 for _ in range(4)] for _ in range(2)]
     (materials / 'runtime.vmt').write_text(
         '"UnlitGeneric"\n{\n "$basetexture" "models/debug/debugwhite"\n'
-        ' "$vertexcolor" "1"\n "$vertexalpha" "1"\n}\n')
+        ' "$vertexcolor" "1"\n "$nocull" "1"\n}\n')
 
     def flush(side, bone):
         if not runtime_counts[side][bone]:
             return
         payload = base64.b64encode(b''.join(runtime[side][bone])).decode('ascii')
-        name = f'{("red", "white")[side]}_{bone}_{len(runtime_chunks[side][bone])}.lua'
+        name = f'{("white", "red")[side]}_{bone}_{len(runtime_chunks[side][bone])}.lua'
         (runtime_dir / name).write_text(f'return {{{bone}, {runtime_counts[side][bone]}, "{payload}"}}\n')
         runtime_chunks[side][bone].append(name)
         runtime[side][bone].clear()
@@ -137,7 +139,7 @@ def main():
                 theta = math.atan2(sum(v[1] for v in verts) / 3 - cy, x - cx)
                 group = 1 + int(((theta + math.pi) / (2 * math.pi) * 3) % 3) if avgz < 175 else 0
                 rgb = data['materials'][p['material']].get('pbrMetallicRoughness', {}).get('baseColorFactor', [0.7, 0.7, 0.7])
-                tint = (1, 0.60, 0.60) if side == 0 else (0.94, 0.97, 1)
+                tint = (0.94, 0.97, 1) if side == 0 else (1, 0.60, 0.60)
                 packed = bytearray(max(6, min(255, round(rgb[c] * tint[c] * 255))) for c in range(3))
                 for idx, v in zip(ids, verts):
                     px, py, pz = (v[0] - cx) * SCALE, (v[1] - cy) * SCALE, v[2] * SCALE
@@ -150,7 +152,7 @@ def main():
                         bone = 0
                     nx, ny, nz = normals[idx] if normals else (0, 0, 1)
                     u, vv = uv[idx] if uv else (0, 0)
-                    out.write(f'{bone} {px:.5f} {py:.5f} {pz - (175 if bone else 0):.5f} {nx:.5f} {ny:.5f} {nz:.5f} {u:.5f} {1-vv:.5f}\n')
+                    out.write(f'{bone} {-py:.5f} {px:.5f} {pz - (175 if bone else 0):.5f} {-ny:.5f} {nx:.5f} {nz:.5f} {u:.5f} {1-vv:.5f}\n')
                     packed.extend(struct.pack('<hhhbbb',
                         round(px * 100), round(py * 100), round((pz - (175 if group else 0)) * 100),
                         *(max(-127, min(127, round(n * 127))) for n in (nx, ny, nz))))
@@ -167,7 +169,7 @@ def main():
         geometry.parent.mkdir(parents=True, exist_ok=True)
         with geometry.open('w') as f:
             f.write('-- Generated from tripods_the_tripods_1984.glb by tools/build_models.py.\nreturn {\n')
-            for side, name in enumerate(('red', 'white')):
+            for side, name in enumerate(('white', 'red')):
                 f.write(f'  {name} = {{\n')
                 for bone, chunks in enumerate(runtime_chunks[side]):
                     for name in chunks:
@@ -178,7 +180,7 @@ def main():
     finally:
         for f in files:
             f.close()
-    for i, kind in enumerate(('red', 'white')):
+    for kind, i in (('red', 1), ('white', 0)):
         (OUT / f'tripod_{kind}.qc').write_text(
             f'$modelname "wow_tripods/tripod_{kind}.mdl"\n'
             f'$body "body" "tripod_{i}.smd"\n'

@@ -2,11 +2,12 @@
 if not DrGBase then return end
 ENT.Base = "drgbase_nextbot"
 ENT.PrintName = "Белая тренога · DrGBase"
-ENT.Category = "War of the Worlds · The Tripods"
+ENT.Category = "wotw mod"
 ENT.Models = {"models/props_combine/combine_mine01.mdl"}
 ENT.SpawnHealth = 1400
 ENT.RagdollOnDeath = false
-ENT.CollisionBounds = Vector(45, 45, 220)
+ENT.CollisionBounds = Vector(65, 65, 310)
+ENT.ModelScale = 1.35
 ENT.StepHeight = 60
 ENT.JumpHeight = 0
 ENT.RunSpeed = 125
@@ -55,7 +56,7 @@ if SERVER then
     end
 else
     function ENT:CustomInitialize()
-        self:SetRenderBounds(Vector(-115,-115,0), Vector(115,115,300))
+        self:SetRenderBounds(Vector(-165,-165,0), Vector(165,165,410))
     end
     function ENT:Draw()
         if self:GetNWBool("WOWRuntimeModel") and WOWTripodsRuntime then
