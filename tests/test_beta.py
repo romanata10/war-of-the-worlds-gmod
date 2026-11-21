@@ -1,6 +1,7 @@
 """Fast offline packaging and geometry checks; game engine still needs in-game testing."""
 import base64
 import re
+import struct
 import unittest
 import zipfile
 from pathlib import Path
@@ -55,6 +56,27 @@ class BetaChecks(unittest.TestCase):
             self.assertIn('wotw_mod/lua/wow_tripods_mesh/spider_0_0.lua', names)
             self.assertIn('wotw_mod/1953_tripod.glb', names)
             self.assertIn('wotw_mod/martian_spider.glb', names)
+
+    def test_new_npcs_icons_and_imperfect_aim(self):
+        classes = ('pendragon', 'walker', 'bbc2019', 'asylum2')
+        with zipfile.ZipFile(ARCHIVE) as archive:
+            names = set(archive.namelist())
+            for name in classes:
+                class_name = 'wow_tripod_' + name
+                for component in ('shared.lua', 'init.lua', 'cl_init.lua'):
+                    self.assertIn(f'wotw_mod/lua/entities/{class_name}/{component}', names)
+                icon = f'materials/entities/{class_name}.png'
+                self.assertIn('wotw_mod/'+icon, names)
+                data = archive.read('wotw_mod/'+icon)
+                self.assertEqual(data[:8], b'\x89PNG\r\n\x1a\n')
+                self.assertEqual(struct.unpack('>II', data[16:24]), (256, 256))
+            self.assertEqual(archive.read('wotw_mod/VERSION').decode().strip(), '1.1.0')
+        ray = (ROOT / 'lua/autorun/server/wow_tripods_attacks.lua').read_text()
+        self.assertIn('function WOWTripods.HeatRay(', ray)
+        self.assertIn('math.Rand(-spread, spread)', ray)
+        self.assertIn('util.TraceLine({start = origin, endpos = origin + direction*', ray)
+        self.assertIn('tr.Entity:TakeDamageInfo(damage)', ray)
+        self.assertNotIn('target:TakeDamageInfo(damage)\n    return true', ray)
 
     def test_new_models(self):
         index = (ROOT / 'lua/wotw_new_geometry.lua').read_text()

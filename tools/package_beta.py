@@ -27,7 +27,7 @@ if not (ROOT / 'generated/source_models/tripod_red.qc').exists():
 if not (ROOT / 'lua/wotw_new_geometry.lua').exists():
     raise SystemExit('First run python3 tools/build_new_models.py')
 with ZipFile(output, 'w', ZIP_DEFLATED, compresslevel=6) as archive:
-    archive.writestr('ИНСТРУКЦИЯ_ПО_УСТАНОВКЕ.txt', f'''wotw mod {version} — четыре NPC с GLB-моделями и процедурной анимацией.
+    archive.writestr('ИНСТРУКЦИЯ_ПО_УСТАНОВКЕ.txt', f'''wotw mod {version} — восемь NPC с процедурной анимацией.
 
 Распакуй папку wotw_mod из архива в garrysmod/addons/ и перезапусти GMod.
 При обновлении замени прежнюю папку wotw_mod. НЕ устанавливай две версии сразу!

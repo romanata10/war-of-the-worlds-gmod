@@ -1,0 +1,14 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "Pendragon Pictures Tripod"
+ENT.Category = "wotw mod"
+ENT.Spawnable = true
+ENT.IconOverride = "entities/wow_tripod_pendragon.png"
+ENT.ModelPath = "models/props_combine/combine_mine01.mdl" -- invisible server collision proxy
+ENT.HealthAmount = 1400
+ENT.MoveSpeed = 140
+ENT.SearchRadius = 2600
+ENT.AttackRange = 1200
+ENT.AttackDelay = 2.7
+ENT.WOTWBounds = Vector(52, 52, 300)
+ENT.StepHeight = 55

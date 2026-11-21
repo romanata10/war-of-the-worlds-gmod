@@ -16,20 +16,38 @@ local function clearShot(bot, target, source)
     return trace.Entity == target, endpos
 end
 
-function WOWTripods.RedAttack(bot, target)
-    if not hostile(target) then return end
-    local start = bot:GetPos() + Vector(0, 0, 200*bot:GetModelScale())
-    local clear, finish = clearShot(bot, target, start)
-    if not clear then return end
-    WOWTripods.Beam(start, finish, true)
-    bot:EmitSound("NPC_Strider.FireMinigun", 95, 85)
+-- All heat rays share the same imperfect shot logic. An unobstructed target is
+-- necessary to fire, but damage depends on the *scattered* world-space trace.
+function WOWTripods.HeatRay(bot, target, origin, amount, tone)
+    if not hostile(target) then return false end
+    local clear, aim = clearShot(bot, target, origin)
+    if not clear then return false end
+    local distance = origin:Distance(aim)
+    local spread = math.Clamp(distance*0.04, 24, 85)
+    local deviation = Vector(math.Rand(-spread, spread), math.Rand(-spread, spread),
+        math.Rand(-spread*0.5, spread*0.5))
+    -- Intentionally inaccurate shots remain visible (and may hit scenery).
+    if math.Rand(0, 1) < 0.24 then
+        deviation = deviation + bot:GetRight()*math.Rand(110, 155)*(math.random(2) == 1 and -1 or 1)
+    end
+    local direction = ((aim + deviation) - origin):GetNormalized()
+    local tr = util.TraceLine({start = origin, endpos = origin + direction*(distance+420),
+        filter = bot, mask = MASK_SHOT})
+    WOWTripods.Beam(origin, tr.HitPos, tone or true)
+    bot:EmitSound("NPC_Strider.FireMinigun", 95, math.random(78, 95))
+    if not hostile(tr.Entity) then return false end
     local damage = DamageInfo()
-    damage:SetDamage(42)
+    damage:SetDamage(amount)
     damage:SetDamageType(DMG_ENERGYBEAM)
     damage:SetAttacker(bot)
     damage:SetInflictor(bot)
-    damage:SetDamagePosition(finish)
-    target:TakeDamageInfo(damage)
+    damage:SetDamagePosition(tr.HitPos)
+    tr.Entity:TakeDamageInfo(damage)
+    return true
+end
+
+function WOWTripods.RedAttack(bot, target)
+    WOWTripods.HeatRay(bot, target, bot:GetPos() + Vector(0, 0, 200*bot:GetModelScale()), 42)
 end
 
 function WOWTripods.Stomp(bot)

@@ -35,5 +35,5 @@ function ENT:AttackTarget(target)
     local trace = util.TraceLine({start = origin, endpos = hit, filter = self, mask = MASK_SHOT})
     if trace.Entity ~= target then return end
     self:EmitSound("Weapon_SMG1.Single", 78, 105)
-    self:FireBullets({Num = 1, Src = origin, Dir = (hit - origin):GetNormalized(), Spread = Vector(0.045, 0.045, 0), Tracer = 1, Damage = 9, Attacker = self})
+    self:FireBullets({Num = 1, Src = origin, Dir = (hit - origin):GetNormalized(), Spread = Vector(0.08, 0.08, 0), Tracer = 1, Damage = 9, Attacker = self})
 end

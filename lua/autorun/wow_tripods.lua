@@ -20,7 +20,7 @@ if SERVER then
         net.Start("WOWTripods_Beam")
         net.WriteVector(from)
         net.WriteVector(to)
-        net.WriteBool(red)
+        net.WriteUInt(red == "green" and 2 or red and 1 or 0, 2)
         net.SendPVS(from)
     end
 
@@ -75,7 +75,7 @@ if CLIENT then
     local material = Material("sprites/laserbeam")
     net.Receive("WOWTripods_Beam", function()
         beams[#beams + 1] = {
-            from = net.ReadVector(), to = net.ReadVector(), red = net.ReadBool(),
+            from = net.ReadVector(), to = net.ReadVector(), tone = net.ReadUInt(2),
             expires = CurTime() + 0.25
         }
     end)
@@ -100,9 +100,10 @@ if CLIENT then
             if beam.expires < CurTime() then
                 table.remove(beams, i)
             else
-                local color = beam.red and Color(255, 35, 25, 255) or Color(180, 230, 255, 255)
-                render.DrawBeam(beam.from, beam.to, beam.red and 14 or 8, 0, 1, color)
-                if not beam.red then
+                local color = beam.tone == 2 and Color(75, 255, 58, 255) or
+                    beam.tone == 1 and Color(255, 35, 25, 255) or Color(180, 230, 255, 255)
+                render.DrawBeam(beam.from, beam.to, beam.tone == 0 and 8 or 14, 0, 1, color)
+                if beam.tone == 0 then
                     local side = (beam.to - beam.from):Cross(Vector(0, 0, 1)):GetNormalized()*15
                     render.DrawBeam(beam.to - side*2, beam.to + side, 5, 0, 1, color)
                     render.DrawBeam(beam.to + side*2, beam.to - side, 5, 0, 1, color)

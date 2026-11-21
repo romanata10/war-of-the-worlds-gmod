@@ -22,12 +22,14 @@ function ENT:Initialize()
     self:SetMaxHealth(self.HealthAmount)
     self:SetSolid(SOLID_BBOX)
     self:SetCollisionGroup(COLLISION_GROUP_NPC)
-    if self.IsTripod then
+    if self.WOTWBounds then
+        self:SetCollisionBounds(Vector(-self.WOTWBounds.x, -self.WOTWBounds.y, 0), self.WOTWBounds)
+    elseif self.IsTripod then
         self:SetCollisionBounds(Vector(-65, -65, 0), Vector(65, 65, 310))
     else
         self:SetCollisionBounds(Vector(-18, -18, 0), Vector(18, 18, 74))
     end
-    self.loco:SetStepHeight(self.IsTripod and 60 or 18)
+    self.loco:SetStepHeight(self.StepHeight or (self.IsTripod and 60 or 18))
     self.loco:SetJumpHeight(0)
     self.loco:SetDesiredSpeed(self.MoveSpeed)
     self.loco:SetAcceleration(self.MoveSpeed * 3)

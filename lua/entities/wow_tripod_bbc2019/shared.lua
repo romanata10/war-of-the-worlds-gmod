@@ -1,0 +1,14 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "BBC 2019 Tripod"
+ENT.Category = "wotw mod"
+ENT.Spawnable = true
+ENT.IconOverride = "entities/wow_tripod_bbc2019.png"
+ENT.ModelPath = "models/props_combine/combine_mine01.mdl" -- invisible server collision proxy
+ENT.HealthAmount = 1700
+ENT.MoveSpeed = 120
+ENT.SearchRadius = 2600
+ENT.AttackRange = 1350
+ENT.AttackDelay = 2.7
+ENT.WOTWBounds = Vector(65, 65, 310)
+ENT.StepHeight = 60

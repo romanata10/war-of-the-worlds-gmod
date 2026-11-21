@@ -1,0 +1,14 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "The Asylum Walker"
+ENT.Category = "wotw mod"
+ENT.Spawnable = true
+ENT.IconOverride = "entities/wow_tripod_walker.png"
+ENT.ModelPath = "models/props_combine/combine_mine01.mdl" -- invisible server collision proxy
+ENT.HealthAmount = 1000
+ENT.MoveSpeed = 205
+ENT.SearchRadius = 2600
+ENT.AttackRange = 950
+ENT.AttackDelay = 2.5
+ENT.WOTWBounds = Vector(45, 45, 185)
+ENT.StepHeight = 55

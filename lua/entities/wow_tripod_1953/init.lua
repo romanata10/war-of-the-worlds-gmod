@@ -86,14 +86,7 @@ function ENT:Think()
         local trace = util.TraceLine({start = mount, endpos = hit, filter = self, mask = MASK_SHOT})
         if now >= self.NextFire and trace.Entity == enemy then
             self.NextFire = now + 2.5
-            WOWTripods.Beam(mount, hit, true)
-            self:EmitSound("NPC_Strider.FireMinigun", 90, 80)
-            local damage = DamageInfo()
-            damage:SetDamage(math.max(200, enemy:Health() + 1))
-            damage:SetDamageType(DMG_ENERGYBEAM)
-            damage:SetAttacker(self)
-            damage:SetInflictor(self)
-            enemy:TakeDamageInfo(damage)
+            WOWTripods.HeatRay(self, enemy, mount, math.max(200, enemy:Health()+1))
         end
         -- Tethered scout camera probes up to 350 units away from the belly.
         local anchor = self:GetPos() - Vector(0, 0, 32)

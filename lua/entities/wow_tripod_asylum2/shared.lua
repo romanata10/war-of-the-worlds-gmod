@@ -1,0 +1,14 @@
+ENT.Base = "wow_invader_base"
+ENT.Type = "nextbot"
+ENT.PrintName = "The Asylum WOTW 2 Tripod"
+ENT.Category = "wotw mod"
+ENT.Spawnable = true
+ENT.IconOverride = "entities/wow_tripod_asylum2.png"
+ENT.ModelPath = "models/props_combine/combine_mine01.mdl" -- invisible server collision proxy
+ENT.HealthAmount = 1250
+ENT.MoveSpeed = 170
+ENT.SearchRadius = 2600
+ENT.AttackRange = 1150
+ENT.AttackDelay = 2.8
+ENT.WOTWBounds = Vector(58, 58, 230)
+ENT.StepHeight = 40
